@@ -1,9 +1,5 @@
 import torch as tc
 import numpy as np
-from mpi4py import MPI
-
-comm = MPI.COMM_WORLD
-
 
 class LinearRegression(tc.nn.Module):
     def __init__(self, in_dim, out_dim):
@@ -35,8 +31,5 @@ for _ in range(OPT_ITERS):
     with tc.no_grad():
         for p in model.parameters():
             g_old = p.grad
-            g_new = np.zeros_like(g_old.numpy())
-            comm.Allreduce(sendbuf=g_old.numpy(), recvbuf=g_new, op=MPI.SUM)
-            p.grad.copy_(tc.Tensor(g_new).float())
             print(p.grad)
     optimizer.step()
